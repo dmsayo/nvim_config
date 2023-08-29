@@ -110,6 +110,14 @@ require('lazy').setup({
             show_modified_status = true,
           }
         }
+      },
+      inactive_sections = {
+        lualine_c = {
+          {
+            'filename',
+            path = 1,
+          }
+        }
       }
     },
   },
@@ -239,7 +247,13 @@ vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = tr
 -- Open file explorer with C-t
 vim.keymap.set('n', '<C-t>', ":Neotree toggle<CR>", { silent = true })
 
+-- Leader quit
+vim.keymap.set('n', '<leader>wq', ':wq<CR>', { silent = true })
+vim.keymap.set('n', '<leader>qt', ':tabc<CR>', { silent = true })
+vim.keymap.set('n', '<leader>qq', ':q<CR>', { silent = true })
+
 -- Terminal remappings
+vim.keymap.set('n', '<leader>tt', ':terminal<CR>', { silent = true})
 vim.keymap.set('n', '<F6>', ':sp<CR>:terminal<CR>:resize 10<CR>', { silent = true })
 vim.keymap.set('n', '<F7>', ':vsp<CR>:terminal<CR>:resize 10<CR>', { silent = true })
 vim.keymap.set('t', '<Esc>', '<C-Bslash><C-n>')
@@ -248,14 +262,24 @@ vim.keymap.set('t', '<Esc>', '<C-Bslash><C-n>')
 vim.keymap.set('n', '<Tab>', 'gt')   -- Next tab with <Tab>
 vim.keymap.set('n', '<S-Tab>', 'gT') -- Prev tab with <S-Tab>
 vim.keymap.set('n', '<S-t>', ':tabnew<CR>', { silent = true })
--- vim.keymap.set('n', '<A-h>', '<C-w>h')
--- vim.keymap.set('n', '<A-j>', '<C-w>j')
--- vim.keymap.set('n', '<A-k>', '<C-w>k')
--- vim.keymap.set('n', '<A-l>', '<C-w>l')
-vim.keymap.set('n', '<M-h>', '<C-w>h')
-vim.keymap.set('n', '<M-j>', '<C-w>j')
-vim.keymap.set('n', '<M-k>', '<C-w>k')
-vim.keymap.set('n', '<M-l>', '<C-w>l')
+
+-- Set tab navigation based on OS
+-- ALT-* for Windows/Linux, OPT-* for OSX
+if vim.fn.has('macunix') then
+  vim.keymap.set('n', '<M-h>', '<C-w>h')
+  vim.keymap.set('n', '<M-j>', '<C-w>j')
+  vim.keymap.set('n', '<M-k>', '<C-w>k')
+  vim.keymap.set('n', '<M-l>', '<C-w>l')
+else
+  vim.keymap.set('n', '<A-h>', '<C-w>h')
+  vim.keymap.set('n', '<A-j>', '<C-w>j')
+  vim.keymap.set('n', '<A-k>', '<C-w>k')
+  vim.keymap.set('n', '<A-l>', '<C-w>l')
+end
+
+-- Quick split
+vim.keymap.set('n', '<leader>vs', ':vsplit_f<CR>', { silent = true })
+vim.keymap.set('n', '<leader>hs', ':split_f<CR>', { silent = true })
 
 -- Theme configuration
 require('onedark').setup {
@@ -310,8 +334,7 @@ vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { des
 vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
-vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
-vim.keymap.set('n', '<leader>vh', require('telescope.builtin').oldfiles, { desc = '[V]iew [H]istory' })
+vim.keymap.set('n', '<leader>sd', function () require('telescope.builtin').diagnostics({ bufnr = 0 }) end, { desc = '[S]earch [D]iagnostics' })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
@@ -406,7 +429,7 @@ local on_attach = function(_, bufnr)
   nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
   -- nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
-  nmap('gd', '<cmd>lua require"telescope.builtin".lsp_definitions({jump_type="tab"})<CR>', '[G]oto [D]efinition')
+  nmap('gdd', '<cmd>lua require"telescope.builtin".lsp_definitions({jump_type="tab"})<CR>', '[G]oto [D]efinition')
   nmap('gds', '<cmd>lua require"telescope.builtin".lsp_definitions({jump_type="vsplit"})<CR>',
     '[G]oto [D]efinition [S]plit')
   nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
