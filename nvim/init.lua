@@ -281,6 +281,9 @@ end
 vim.keymap.set('n', '<leader>vs', ':vsplit_f<CR>', { silent = true })
 vim.keymap.set('n', '<leader>hs', ':split_f<CR>', { silent = true })
 
+-- Set Diffview deleted fill characters to `/`
+vim.opt.fillchars:append { diff = "╱" }
+
 -- Theme configuration
 require('onedark').setup {
   style = 'warmer',
@@ -340,7 +343,7 @@ vim.keymap.set('n', '<leader>sd', function () require('telescope.builtin').diagn
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'lua', 'python', 'tsx', 'typescript', 'help', 'vim', 'java' },
+  ensure_installed = { 'c', 'cpp', 'lua', 'python', 'tsx', 'typescript', 'javascript', 'markdown', 'help', 'vim', 'java' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = false,
@@ -434,7 +437,8 @@ local on_attach = function(_, bufnr)
     '[G]oto [D]efinition [S]plit')
   nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
   nmap('gI', vim.lsp.buf.implementation, '[G]oto [I]mplementation')
-  nmap('<leader>td', vim.lsp.buf.type_definition, '[T]ype [D]efinition')
+  -- nmap('<leader>td', vim.lsp.buf.type_definition, '[T]ype [D]efinition')
+  nmap('<leader>td', require('telescope.builtin').lsp_type_definitions, '[T]ype [D]efinition')
   nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
   nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 
@@ -473,14 +477,6 @@ local servers = {
   },
   jdtls = {},
   emmet_ls = {},
-  volar = {
-    -- filetypes = {'vue', 'typescript', 'json', 'typescriptreact', 'javascriptreact', 'javascript'},
-    init_options = {
-      typescript = {
-        tsdk = "/Users/derrylsayo/.nvm/versions/node/v14.18.2/lib/node_modules/typescript/lib",
-      }
-    }
-  },
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
