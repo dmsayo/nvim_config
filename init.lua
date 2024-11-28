@@ -247,6 +247,8 @@ vim.bo.softtabstop = 2
 vim.opt.spelllang = 'en_us'
 vim.opt.spell = true
 
+vim.opt.smartindent = false
+
 -- [[ Basic Keymaps ]]
 
 -- Keymaps for better default experience
@@ -363,7 +365,7 @@ require('nvim-treesitter.configs').setup {
   auto_install = false,
 
   highlight = { enable = true },
-  indent = { enable = false, disable = { 'python' } },
+  indent = { enable = true, disable = { 'python' } },
   incremental_selection = {
     enable = true,
     keymaps = {
